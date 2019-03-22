@@ -1,0 +1,22 @@
+pipeline{
+    agent any;
+    stages{
+        stage("cleaning up the workspace"){
+            steps{
+               cleanWs()
+            }
+        }
+        stage("checking out the code from Git"){
+            steps{
+               git 'https://github.com/saimanoj4/hrms.git'
+            }
+        }
+        stage("packing the war file"){
+            steps{
+               tool name: 'MAVEN_HOME', type: 'maven'
+               bat 'mvn package'
+            }
+        }
+    }
+    
+}

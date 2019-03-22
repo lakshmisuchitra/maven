@@ -1,0 +1,46 @@
+pipeline{
+      agent any
+	  stages {
+	       stage('code checkout'){
+	          steps{
+			    script{
+					 def Maven_Home = tool 'MAVEN_HOME'
+					 def workspace = pwd()
+			        }
+		         git changelog: false, poll: false, url: 'https://github.com/saimanoj4/hrms.git'
+				}
+              }
+	   
+	  stage('build maven project'){
+             steps{
+                 script{
+                         bat 'mvn clean install'
+					   }
+                  }  
+			}		
+      stage('packaging to war file '){
+              steps{
+                  script{
+                         bat 'mvn package'
+                     }
+			     }
+             }   
+	  stage('Deploying war to tomcat'){
+               steps{
+                  script{
+				   dir('C:\\Apache Software Foundation\\Tomcat 8.5\\bin'){
+					  bat 'Tomcat8.exe stop'
+				   }
+				   dir("${workspace}\\Archive")	  {
+				       fileOperations([fileCopyOperation(excludes: '', flattenFiles: false, includes: '*.war', targetLocation: 'C:\\Apache Software Foundation\\Tomcat 8.5\\webapps')])
+				   }
+				
+				   dir('C:\\Apache Software Foundation\\Tomcat 8.5\\bin'){
+					  bat 'Tomcat8.exe start'
+				   }
+
+				   }
+			    }
+            }			   
+        }
+	}  

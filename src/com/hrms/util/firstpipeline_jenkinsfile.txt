@@ -1,0 +1,36 @@
+pipeline{
+    agent any
+    stages
+    {
+        stage("Cleaning workspace")
+        {
+            steps{
+                cleanWs()
+            }
+        }
+        stage("Checkout the code from Git")
+        {
+            steps{
+             git 'https://github.com/saimanoj4/maven-project.git'
+            }
+        }
+        
+        stage("Creating MVN package")
+        {
+            steps{
+              tool name: 'MAVEN_HOME', type: 'maven'
+             bat 'mvn package'
+
+            }
+        }
+       stage("Publishing Artifacts")
+        {
+            steps{
+              
+            archiveArtifacts '**/*.war'
+
+            }
+        }
+    }
+    
+}
